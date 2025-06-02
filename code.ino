@@ -10,9 +10,12 @@
  scrollDisplayLeft() and scrollDisplayRight() methods to scroll
  the text.
 
+ This sketch prints "(>.<)" on displays, and scroll the string from one display to
+ the other.
+
   The circuit:
  * LCD RS pin to digital pin 12
- * LCD Enable pin to digital pin 11
+ * LCD Enable pin to digital pin 11,10,9,8
  * LCD D4 pin to digital pin 5
  * LCD D5 pin to digital pin 4
  * LCD D6 pin to digital pin 3
@@ -33,9 +36,7 @@
  modified 7 Nov 2016
  by Arturo Guadalupi
 
- This example code is in the public domain.
-
- http://www.arduino.cc/en/Tutorial/LiquidCrystalScroll
+  This sketch is written by Chase Chen for Westview AP Physics C Final Arudino project
 
 */
 
@@ -54,18 +55,16 @@ LiquidCrystal lcd1(rs, en1, d4, d5, d6, d7);
 LiquidCrystal lcd2(rs, en2, d4, d5, d6, d7);
 LiquidCrystal lcd3(rs, en3, d4, d5, d6, d7);
 LiquidCrystal lcd4(rs, en4, d4, d5, d6, d7);
-// byte smiley[8] = {
-//   B00000,  // Row 0 (top)
-//   B10001,  // Row 1
-//   B00000,  // Row 2
-//   B00000,  // Row 3
-//   B10001,  // Row 4
-//   B01110,  // Row 5
-//   B00000,  // Row 6
-// };         // Row 7 is implicitly all 0s
-
 
 void printToDisplay(String a, int c, int r, LiquidCrystal lcd){
+  /*
+    This function print the string to the display without saving the previous string.
+    Args:
+      String a :  a string to display
+      int c: the column position
+      int r: the row position
+      LiquidCrystal lcd: the lcd object
+  */
   lcd.noDisplay();
   lcd.clear();
   lcd.setCursor(c, r);
@@ -74,6 +73,15 @@ void printToDisplay(String a, int c, int r, LiquidCrystal lcd){
 }
 
 void hide(String a, int r,LiquidCrystal lcd, int dir){
+  /*
+    This funciton hide the string to the left or to the right of the display
+    Args:
+      String a: the string to display
+      int r: the row input
+      LIquidCrystal lcd: lcd object
+      int dir: direciton of hiding, either left or right, (+ or -)
+  */
+  
   lcd.noDisplay();
   lcd.clear();
   lcd.setCursor(0, r);
@@ -99,7 +107,8 @@ void setup() {
   lcd2.begin(16, 2);
   lcd3.begin(16, 2);
   lcd4.begin(16, 2);
-  // Print a message to the LCD.
+  
+  // Print a message to the LCD for initialization and testing.
   //lcd1.print("HELLO");
   printToDisplay("chase",0,1,lcd1);
   //printToDisplay("0721",6,0,lcd2);
@@ -111,53 +120,69 @@ void setup() {
 }
 
 void loop() {
-  // scroll 13 positions (string length) to the left
   // to move it offscreen left:
   hide(my_string,0,lcd1,1);
   hide(my_string,0,lcd2,1);
+  // reverse hide location for lcd 3 and 4 due to mounting
   hide(my_string,1,lcd3,-1);
   hide(my_string,1,lcd4,-1);
 
+  // move from the first lcd row 0(top left)
   for(int i=0;i<16+my_string.length();i++){
     lcd1.scrollDisplayRight();
     delay(200);
   }
+
+  // move from the second lcd row 0(top right)
   for(int i=0;i<16+my_string.length();i++){
     lcd2.scrollDisplayRight();
     delay(200);
   }
+  
+  // hide string on row 1
   hide(my_string,1,lcd1,1);
   hide(my_string,1,lcd2,1);
+
+  // move from the first lcd row 1
   for(int i=0;i<16+my_string.length();i++){
     lcd1.scrollDisplayRight();
     delay(200);
   }
+
+  //move from the second lcd row 1
   for(int i=0;i<16+my_string.length();i++){
     lcd2.scrollDisplayRight();
     delay(200);
   }
 
+  // move from the third lcd row 1
   for(int i=0;i<16+my_string.length();i++){
     lcd3.scrollDisplayLeft();
     delay(200);
   }
+
+  // move from the forth lcd row 1
   for(int i=0;i<16+my_string.length();i++){
     lcd4.scrollDisplayLeft();
     delay(200);
   }
+
+  // get ready for the second row
   hide(my_string,0,lcd3,-1);
   hide(my_string,0,lcd4,-1);
+
+  // move from the third lcd row 0
   for(int i=0;i<16+my_string.length();i++){
     lcd3.scrollDisplayLeft();
     delay(200);
   }
+
+  // move from the fourth lcd row 0
   for(int i=0;i<16+my_string.length();i++){
     lcd4.scrollDisplayLeft();
     delay(200);
   }
-
   
-
   // delay at the end of the full loop:
   delay(1000);
 
